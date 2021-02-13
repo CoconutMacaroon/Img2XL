@@ -115,21 +115,25 @@ def image_to_Excel(input_image_path: str, output_Excel_path: str, x_dim: int, y_
             
 
     # save the Excel file
-    wb.save("image.xlsx")
+    wb.save(output_Excel_path)
 
     # and open it in Excel
     import os
     os.system(
         r""""c:\Program Files\Microsoft Office\root\Office16\excel.exe" """ + output_Excel_path)
 
-#image_to_Excel(r"c:\Users\Arjun\Documents\Image20210213105453.jpg", r"c:\users\arjun\image.xlsx", 250, 250)
-
-@Gooey(progress_regex=r"^(\d+)/(\d+)$", progress_expr="x[0] / x[1] * 100")
+# this is for the Gooey module to generate the GUI for me
+# the arguments setup the progress bar in the GUI
+@Gooey(
+    progress_regex=r"^(\d+)/(\d+)$",
+    progress_expr="x[0] / x[1] * 100",
+    hide_progress_msg=True
+)
 def setupCLI():
-    parser = GooeyParser()
+    parser = GooeyParser(description=r"Img2XL")
     parser.add_argument("imagePath", help=r"The absolute path to the input image", widget='FileChooser')
     parser.add_argument(
-        "outputPath", help=r"The absolute path to the resulting Excel file. File will be overwritten if present.", widget='FileChooser')
+        "outputPath", help=r"The absolute path to the resulting Excel file. File will be overwritten if present.", widget='FileSaver')
     parser.add_argument(
         "xDim", type=int, help=r"The desired width of the output, in pixels. Values above 300 produce undefined results.")
     parser.add_argument(
@@ -137,4 +141,5 @@ def setupCLI():
     args = parser.parse_args()
 
     image_to_Excel(args.imagePath, args.outputPath, args.xDim, args.yDim)
+
 setupCLI()
